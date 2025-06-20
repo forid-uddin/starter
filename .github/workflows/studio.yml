@@ -1,28 +1,22 @@
-name: studio-nuxt-build
-run-name: studio nuxt build
+name: Deploy Nuxt to GitHub Pages
 
 on:
   push:
     branches:
-      - 'main'
+      - main
   workflow_dispatch:
 
 permissions:
   contents: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -34,12 +28,11 @@ jobs:
         run: npm run generate
         env:
           NITRO_PRESET: github_pages
-          NUXT_CONTENT_PREVIEW_API: https://api.nuxt.studio
 
-      - name: Show output folder
-        run: ls -la ./.output/public
+      - name: Debug: show generated files
+        run: ls -la .output/public
 
-      - name: Deploy 🚀
+      - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: ./.output/public
+          folder: .output/public
